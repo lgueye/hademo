@@ -1,0 +1,54 @@
+---
+
+- name: 'install os packages'
+  package: name="{{ item }}" state='present'
+  with_items:
+  - 'curl'
+  - 'vim'
+  - 'haveged'
+  - 'openjdk-8-jre'
+
+- name: "stop {{ servicename }}"
+  service: name="{{ servicename }}" state='stopped'
+  ignore_errors: 'yes'
+
+- name: "unlink {{ remote_root_path }}/{{ servicename }}.jar (old revision)"
+  file: state='absent' dest="{{ remote_root_path }}/{{ servicename }}.jar"
+  ignore_errors: 'yes'
+
+- name: "link {{ remote_revision_path }}/{{ servicename }}.jar to {{ remote_root_path }}/{{ servicename }}.jar (new revision)"
+  file: state='link' src="{{ remote_revision_path }}/{{ servicename }}.jar" dest="{{ remote_root_path }}/{{ servicename }}.jar"
+
+- name: 'unlink {{ remote_root_path }}/logback.xml (old revision)'
+  file: state='absent' dest='{{ remote_root_path }}/logback.xml'
+  ignore_errors: 'yes'
+
+- name: 'interpolate {{ remote_revision_path }}/logback.xml config (new revision)'
+  template: src="logback.xml.j2" dest="{{ remote_revision_path }}/logback.xml"
+
+- name: 'link {{ remote_revision_path }}/logback.xml to {{ remote_root_path }}/logback.xml (new revision)'
+  file: state='link' src="{{ remote_revision_path }}/logback.xml" dest='{{ remote_root_path }}/logback.xml'
+
+- name: 'extrapolate {{ servicename }}.service'
+  template: src='{{ servicename }}.service.j2' dest="/etc/systemd/system/{{ servicename }}.service"
+
+- name: "reload systemd"
+  command: systemctl daemon-reload
+
+- name: "enable and start {{ servicename }}"
+  service: name="{{ servicename }}" enabled='yes' state='restarted'
+
+- name: "wait for port {{ serviceport }} to be available"
+  wait_for: port="{{ serviceport }}" delay='1' timeout="{{ service_startup_timeout }}"
+
+- name: 'deply consul service definition {{ servicename }}.json.j2 to {{ consul_config_dir }}/client/{{ servicename }}.json'
+  template: src='{{ servicename }}.json.j2' dest="{{ consul_config_dir }}/client/{{ servicename }}.json"
+  when: register_service == true
+
+- name: "restart consul.service"
+  service: name="consul" state='restarted'
+  when: register_service == true
+
+- name: "wait for port consul_ports.http to be available"
+  wait_for: port="{{ consul_ports.http }}" delay='1' timeout="{{ service_startup_timeout }}"
+  when: register_service == true

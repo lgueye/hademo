@@ -1,0 +1,139 @@
+# Usage: export ANSIBLE_TF_DIR=../terraform/digitalocean && ansible-playbook --vault-id ~/.ansible_vault_pass.txt -i /etc/ansible/terraform.py hademo.yml -e "target_env=staging rev=`git log -1 --pretty='%h'`"
+#
+
+# Locally register inventory hosts
+- hosts: 'localhost'
+  connection: 'local'
+  tasks:
+  - block:
+    - include_role: {name: 'register_inventory_hosts'}
+    rescue:
+    - fail:
+        msg: "Failed to register inventory hosts"
+
+# Locally download consul
+- hosts: 'localhost'
+  connection: 'local'
+  gather_facts: no
+  tasks:
+  - block:
+    - include_role: {name: 'download_consul'}
+    rescue:
+    - fail:
+        msg: "Failed to download consul to {{ consul_download_dir }}"
+
+# Deploy consul on all hosts (clients and servers)
+- hosts: "{{ target_env }}:&(consul_client:consul_server:consul_ui)"
+  remote_user: "root"
+  become: 'yes'
+  tasks:
+  - block:
+    - include_role: {name: 'deploy_consul'}
+    rescue:
+    - fail:
+        msg: "Failed to deploy consul to all nodes (client + servers)"
+
+# Upgrade consul on all servers
+- hosts: "{{target_env}}:&consul_server"
+  remote_user: "root"
+  become: 'yes'
+  tasks:
+  - block:
+    - include_role: {name: 'upgrade_node'}
+      vars: {node_role: 'server'}
+    rescue:
+    - fail:
+        msg: "Failed to upgrade consul cluster nodes"
+
+# Upgrade consul on all clients
+- hosts: "{{target_env}}:&consul_client"
+  remote_user: "root"
+  become: 'yes'
+  tasks:
+  - block:
+    - include_role: {name: 'oefenweb.dnsmasq'}
+    - name: "[systemd-resolved vs dnsmasq conflict]: update local name server"
+      lineinfile:
+        path: /etc/resolv.conf
+        regexp: '^nameserver 127.0.0.53'
+        line: 'nameserver 127.0.0.1'
+    - name: "[systemd-resolved vs dnsmasq conflict]: stop systemd-resolved.service"
+      service: name="systemd-resolved" state='stopped'
+    - name: "[systemd-resolved vs dnsmasq conflict]: disable systemd-resolved.service"
+      service: name="systemd-resolved" enabled='false'
+    - name: "[systemd-resolved vs dnsmasq conflict]: restart dnsmasq.service"
+      service: name="dnsmasq" state='restarted'
+    - include_role: {name: 'upgrade_node'}
+      vars: {node_role: 'client'}
+    rescue:
+    - fail:
+        msg: "Failed to upgrade consul client"
+
+# Locally download cockroachdb
+- hosts: 'localhost'
+  connection: 'local'
+  gather_facts: no
+  tasks:
+  - block:
+    - include_role: {name: 'download_cockroachdb'}
+    rescue:
+    - fail:
+        msg: "Failed to download cockroachdb to {{ cockroachdb_download_dir }}"
+
+# Deploy cockroachdb on all hosts (servers)
+- hosts: "{{ target_env }}:&cockroachdb_server"
+  remote_user: "root"
+  become: 'yes'
+  tasks:
+  - block:
+    - include_role: {name: 'deploy_cockroachdb'}
+    rescue:
+    - fail:
+        msg: "Failed to deploy cockroachdb to all nodes (servers)"
+
+# Upgrade cockroachdb on all servers
+- hosts: "{{target_env}}:&cockroachdb_server"
+  remote_user: "root"
+  become: 'yes'
+  tasks:
+  - block:
+    - include_role: {name: 'upgrade_node'}
+      vars: {node_role: 'server'}
+    rescue:
+    - fail:
+        msg: "Failed to upgrade cockroachdb cluster nodes"
+
+# Locally build service
+- hosts: 'localhost'
+  connection: 'local'
+  gather_facts: no
+  tasks:
+  - block:
+    - include_role: {name: 'build_service'}
+    rescue:
+    - fail:
+        msg: "Failed to build {{ servicename }} service"
+
+# Upgrade hademo service
+- hosts: "{{target_env}}:&hademo"
+  remote_user: "root"
+  become: 'yes'
+  tasks:
+  - block:
+    - include_role: {name: 'deploy_service'}
+    - include_role: {name: 'upgrade_service'}
+      vars: {register_service: true}
+    rescue:
+    - fail:
+        msg: "Failed to upgrade {{ servicename }} service"
+
+# Upgrade consul ui
+- hosts: "{{target_env}}:&consul_ui"
+  remote_user: "root"
+  become: 'yes'
+  tasks:
+  - block:
+    - include_role: {name: 'upgrade_ui'}
+    rescue:
+    - fail:
+        msg: "Failed to upgrade consul ui"

@@ -1,0 +1,13 @@
+[Unit]
+Description=Systemd service for {{servicename}}
+After=syslog.target network-online.target
+Wants=network-online.target
+
+[Service]
+Restart=on-failure
+RestartSec=10
+StartLimitInterval=0
+ExecStart={{ remote_root_path }}/{{ servicename }}.jar --server.port={{ serviceport }} --logging.config={{ remote_root_path }}/logback.xml
+
+[Install]
+WantedBy=multi-user.target
