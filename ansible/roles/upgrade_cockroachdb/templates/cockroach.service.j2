@@ -1,0 +1,17 @@
+[Unit]
+Description={{ cockroachdb_product }} service
+Requires=network-online.target
+After=network.target
+
+[Service]
+#User=consul
+#Group=consul
+PIDFile={{ cockroachdb_pid_file }}
+Restart=on-failure
+ExecStart={{ cockroachdb_home }}/{{ cockroachdb_product }} agent $OPTIONS --pid-file={{ consul_pid_file }} --config-dir={{ consul_config_dir }}/{{node_role}} --bind={{ansible_host}}
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+
+[Install]
+WantedBy=multi-user.target

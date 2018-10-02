@@ -1,0 +1,7 @@
+---
+
+- name: "create deploy dir {{ cockroachdb_home }}/{{ cockroachdb_version }}"
+  file: state='directory' path="{{ cockroachdb_home }}/{{ cockroachdb_version }}"
+
+- name: "copy {{ cockroachdb_download_dir }}/{{ cockroachdb_pkg }}/{{ cockroachdb_product }} to {{ cockroachdb_home }}/{{ cockroachdb_version }}/"
+  copy: src="{{ cockroachdb_download_dir }}/{{ cockroachdb_pkg }}/{{ cockroachdb_product }}" dest="{{ cockroachdb_home }}/{{ cockroachdb_version }}/{{ cockroachdb_product }}" mode='u=xrw,g=xr,o=r'

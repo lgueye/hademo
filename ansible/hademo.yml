@@ -23,7 +23,7 @@
         msg: "Failed to download consul to {{ consul_download_dir }}"
 
 # Deploy consul on all hosts (clients and servers)
-- hosts: "{{ target_env }}:&(consul_client:consul_server:consul_ui)"
+- hosts: "&{{ target_env }}:consul_client:consul_server"
   remote_user: "root"
   become: 'yes'
   tasks:
@@ -31,7 +31,7 @@
     - include_role: {name: 'deploy_consul'}
     rescue:
     - fail:
-        msg: "Failed to deploy consul to all nodes (client + servers)"
+        msg: "Failed to deploy consul to all nodes (client, servers)"
 
 # Upgrade consul on all servers
 - hosts: "{{target_env}}:&consul_server"
