@@ -24,13 +24,13 @@ variable "consul_product_name" {
   default = "consul"
 }
 variable "consul_client_role" {
-  default = "consul_client"
+  default = "consul-client"
 }
 variable "consul_server_role" {
-  default = "consul_server"
+  default = "consul-server"
 }
 variable "consul_ui_role" {
-  default = "consul_ui"
+  default = "consul-ui"
 }
 resource "digitalocean_tag" "consul_product_name" {
   name = "${var.consul_product_name}"
@@ -58,10 +58,10 @@ variable "cockroachdb_product_name" {
   default = "cockroachdb"
 }
 variable "cockroachdb_client_role" {
-  default = "cockroachdb_client"
+  default = "cockroachdb-client"
 }
 variable "cockroachdb_server_role" {
-  default = "cockroachdb_server"
+  default = "cockroachdb-server"
 }
 resource "digitalocean_tag" "cockroachdb_product_name" {
   name = "${var.cockroachdb_product_name}"
@@ -76,7 +76,7 @@ resource "digitalocean_tag" "cockroachdb_server_role" {
 # consul droplets and ansible inventory
 resource "digitalocean_droplet" "consul_ui_droplet" {
   image = "${var.droplet_image}"
-  name = "${var.consul_product_name}-${var.consul_ui_role}"
+  name = "${var.consul_ui_role}"
   region = "${var.droplet_region}"
   size = "${var.droplet_size}"
   private_networking = true
@@ -93,7 +93,7 @@ resource "ansible_host" "consul_ui_droplet" {
 }
 resource "digitalocean_droplet" "consul_server_01_droplet" {
   image = "${var.droplet_image}"
-  name = "${var.consul_product_name}-${var.consul_server_role}-01"
+  name = "${var.consul_server_role}-01"
   region = "${var.droplet_region}"
   size = "${var.droplet_size}"
   private_networking = true
@@ -110,7 +110,7 @@ resource "ansible_host" "consul_server_01_droplet" {
 }
 resource "digitalocean_droplet" "consul_server_02_droplet" {
   image = "${var.droplet_image}"
-  name = "${var.consul_product_name}-${var.consul_server_role}-02"
+  name = "${var.consul_server_role}-02"
   region = "${var.droplet_region}"
   size = "${var.droplet_size}"
   private_networking = true
@@ -127,7 +127,7 @@ resource "ansible_host" "consul_server_02_droplet" {
 }
 resource "digitalocean_droplet" "consul_server_03_droplet" {
   image = "${var.droplet_image}"
-  name = "${var.consul_product_name}-${var.consul_server_role}-03"
+  name = "${var.consul_server_role}-03"
   region = "${var.droplet_region}"
   size = "${var.droplet_size}"
   private_networking = true
@@ -182,7 +182,7 @@ resource "ansible_host" "service_02_droplet" {
 # cockroachdb droplets and ansible inventory
 resource "digitalocean_droplet" "cockroachdb_server_01_droplet" {
   image = "${var.droplet_image}"
-  name = "${var.cockroachdb_product_name}-${var.cockroachdb_server_role}-01"
+  name = "${var.cockroachdb_server_role}-01"
   region = "${var.droplet_region}"
   size = "${var.droplet_size}"
   private_networking = true
@@ -190,7 +190,7 @@ resource "digitalocean_droplet" "cockroachdb_server_01_droplet" {
   tags = ["${digitalocean_tag.target_env.name}","${digitalocean_tag.cockroachdb_product_name.name}","${digitalocean_tag.consul_client_role.name}","${digitalocean_tag.cockroachdb_server_role.name}"]
 }
 resource "ansible_host" "cockroachdb_server_01_droplet" {
-  inventory_hostname = "${digitalocean_droplet.cockroachdb_server_01_droplet.ipv4_address}"
+  inventory_hostname = "${digitalocean_droplet.cockroachdb_server_01_droplet.name}"
   groups = ["${var.target_env}","${var.cockroachdb_product_name}","${var.consul_client_role}","${var.cockroachdb_server_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.cockroachdb_server_01_droplet.ipv4_address}"
@@ -199,7 +199,7 @@ resource "ansible_host" "cockroachdb_server_01_droplet" {
 }
 resource "digitalocean_droplet" "cockroachdb_server_02_droplet" {
   image = "${var.droplet_image}"
-  name = "${var.cockroachdb_product_name}-${var.cockroachdb_server_role}-02"
+  name = "${var.cockroachdb_server_role}-02"
   region = "${var.droplet_region}"
   size = "${var.droplet_size}"
   private_networking = true
@@ -216,7 +216,7 @@ resource "ansible_host" "cockroachdb_server_02_droplet" {
 }
 resource "digitalocean_droplet" "cockroachdb_server_03_droplet" {
   image = "${var.droplet_image}"
-  name = "${var.cockroachdb_product_name}-${var.cockroachdb_server_role}-03"
+  name = "${var.cockroachdb_server_role}-03"
   region = "${var.droplet_region}"
   size = "${var.droplet_size}"
   private_networking = true
