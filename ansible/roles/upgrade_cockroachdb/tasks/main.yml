@@ -42,3 +42,12 @@
 
 - name: "wait for port cockroachdb_ports.http to be available"
   wait_for: host="{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}" port="{{ cockroachdb_ports.http }}" delay='1' timeout="{{ service_startup_timeout }}"
+
+- name: "deploy {{ cockroachdb_product }} service definition {{ cockroachdb_product }}.json.j2 to {{ consul_config_dir }}/client/{{ cockroachdb_product }}.json'
+  template: src="{{ cockroachdb_product }}.json.j2" dest="{{ consul_config_dir }}/client/{{ cockroachdb_product }}.json"
+
+- name: "restart {{ consul_product }}.service"
+  service: name="{{ consul_product }}" state='restarted'
+
+- name: "wait for port {{ consul_ports.http }} to be available"
+  wait_for: port="{{ consul_ports.http }}" delay='1' timeout="{{ service_startup_timeout }}"
