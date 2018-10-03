@@ -102,7 +102,7 @@ htpasswd_path: '/etc/nginx/passwdfile'
 cockroachdb_product: 'cockroach'
 cockroachdb_version: '2.0.6'
 
-cockroachdb_pkg: "{{ cockroachdb_product }}-v{{ cockroachdb_version}}.{{ os_family }}_{{ os_architecture }}"
+cockroachdb_pkg: "{{ cockroachdb_product }}-v{{ cockroachdb_version}}.{{ os_family }}-{{ os_architecture }}"
 cockroachdb_tgz_url: "https://binaries.cockroachdb.com/{{ cockroachdb_pkg }}.tgz"
 cockroachdb_download_dir: "/tmp/{{ cockroachdb_product }}/downloads"
 
@@ -111,8 +111,12 @@ cockroachdb_data_dir: "/var/{{ cockroachdb_product }}"
 cockroachdb_log_dir: "/var/log/{{ cockroachdb_product }}"
 cockroachdb_pid_dir: "/run/{{ cockroachdb_product }}"
 cockroachdb_pid_file: "{{ cockroachdb_pid_dir }}/{{ cockroachdb_product }}.pid"
-cockroachdb_certs_dir: "/etc/{{ cockroachdb_product }}/certs"
+
+cockroachdb_remote_install_dir: "{{ cockroachdb_home }}/{{ cockroachdb_version }}"
+cockroachdb_local_certs_dir: "{{ cockroachdb_download_dir }}/certs"
 
 cockroachdb_ports:
   http: "{{ cockroachdb_ports_http | default('8080', true) }}"
   server: "{{ cockroachdb_ports_server | default('26257', true) }}"
+
+cockroachdb_security_mode: "{{ security_mode | default('insecure', true) }}"

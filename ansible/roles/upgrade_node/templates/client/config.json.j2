@@ -6,6 +6,6 @@
   "log_level": "INFO",
   "enable_syslog": true,
   "ui": true,
-  "retry_join": {{ groups['consul_server'] | to_json }}
+  "retry_join": {{ groups['consul-server'] | to_json }}
 
 }

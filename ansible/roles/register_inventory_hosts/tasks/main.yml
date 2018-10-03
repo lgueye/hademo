@@ -7,5 +7,5 @@
   with_items: "{{ groups[ vars['target_env'] ] }}"
 
 - name: add to know hosts
-  shell: "ssh-keyscan -H -T 10 {{ item }} >> ~/.ssh/known_hosts"
+  shell: "ssh-keyscan -H -T 10 {{ hostvars[item].ansible_host }} >> ~/.ssh/known_hosts"
   with_items: "{{ groups[ vars['target_env'] ]}}"
