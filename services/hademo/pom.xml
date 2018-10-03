@@ -23,6 +23,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<postgresql.version>42.2.5</postgresql.version>
+		<lombok.version>1.16.20</lombok.version>
+		<h2.version>1.4.191</h2.version>
 	</properties>
 
 	<dependencies>
@@ -47,6 +49,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2.version}</version>
+			<!--<scope>test</scope>-->
 		</dependency>
 	</dependencies>
 	<build>

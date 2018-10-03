@@ -1,4 +1,4 @@
-package io.agileinfra.consuldemo.consuldemo;
+package io.agileinfra.hademo;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
