@@ -11,16 +11,18 @@
   when: cockroachdb_security_mode == 'secure'
 
 - name: "copy ca from {{ cockroachdb_local_certs_dir }}/ca/ca.crt to {{ cockroachdb_remote_install_dir }}/certs"
-  copy: src="{{ cockroachdb_local_certs_dir }}/ca/ca.crt" dest="{{ cockroachdb_remote_install_dir }}/certs/"
+  copy: src="{{ cockroachdb_local_certs_dir }}/ca/ca.crt" dest="{{ cockroachdb_remote_install_dir }}/certs/" mode='600'
   when: cockroachdb_security_mode == 'secure'
+
+- name: "copy root user certificate from {{ cockroachdb_local_certs_dir }}/ca/ca.crt to {{ cockroachdb_remote_install_dir }}/certs"
+  copy: src="{{ cockroachdb_local_certs_dir }}/client/client.root.{{item}}" dest="{{ cockroachdb_remote_install_dir }}/certs/" mode='600'
+  when: cockroachdb_security_mode == 'secure'
+  with_items:
+    - "crt"
+    - "key"
 
 - name: "copy certs from {{ cockroachdb_local_certs_dir }}/node/* to {{ cockroachdb_remote_install_dir }}/certs"
-  copy: src="{{ item }}" dest="{{ cockroachdb_remote_install_dir }}/certs/"
-  with_fileglob:
-    - "{{ cockroachdb_local_certs_dir }}/{{ hostvars[inventory_hostname] }}/*"
+  copy: src="{{ item }}" dest="{{ cockroachdb_remote_install_dir }}/certs/" mode='600'
   when: cockroachdb_security_mode == 'secure'
-
-#- name: "copy certs from {{ cockroachdb_local_certs_dir }}/node/* to {{ cockroachdb_remote_certs_dir }}/"
-#  copy: src="{{ item }}" dest="{{ cockroachdb_remote_certs_dir }}/"
-#  with_fileglob:
-#    - "{{ cockroachdb_local_certs_dir }}/{{ groups['cockroachdb-server'] | intersect( groups[ vars['target_env'] ]) | intersect( [hostvars[inventory_hostname]] ) }}/*"
+  with_fileglob:
+    - "{{ cockroachdb_local_certs_dir }}/{{ inventory_hostname }}/*"

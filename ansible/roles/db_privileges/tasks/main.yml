@@ -1,0 +1,8 @@
+---
+
+- name: "Create privileges from node {{ hostvars[ansible_host] }}"
+  shell: "{{ cockroachdb_home }}/{{ cockroachdb_product }} sql --certs-dir={{ cockroachdb_home }}/certs --execute \"{{ item }}\""
+  with_items:
+  - "CREATE DATABASE IF NOT EXISTS {{ servicename }}_db WITH ENCODING 'UTF-8'"
+  - "CREATE USER IF NOT EXISTS {{ servicename }}_user WITH PASSWORD '{{cockroachdb_hademo_password}}'"
+  - "GRANT ALL ON DATABASE {{ servicename }}_db TO {{ servicename }}_user"

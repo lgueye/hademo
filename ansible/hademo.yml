@@ -1,5 +1,4 @@
 # Usage: export ANSIBLE_TF_DIR=../terraform/digitalocean && ansible-playbook --vault-id ~/.ansible_vault_pass.txt -i /etc/ansible/terraform.py hademo.yml -e "target_env=staging rev=`git log -1 --pretty='%h'`"
-#
 
 # Locally register inventory hosts
 - hosts: 'localhost'
@@ -45,7 +44,6 @@
     - fail:
         msg: "Failed to upgrade consul cluster nodes"
 
-
 # Upgrade consul on all clients
 - hosts: "{{target_env}}:&consul-client"
   remote_user: "root"
@@ -89,7 +87,8 @@
   gather_facts: no
   tasks:
   - block:
-    - include_role: {name: 'produce_cockroachdb_certs', when cockroachdb_security_mode == 'secure'}
+    - include_role: {name: 'produce_cockroachdb_certs'}
+      when: cockroachdb_security_mode == 'secure'
     rescue:
     - fail:
         msg: "Failed to produce cockroachdb certs to {{ cockroachdb_local_certs_dir }}"
@@ -112,42 +111,43 @@
   become: 'yes'
   tasks:
   - block:
+    - include_role: {name: 'initialize_cockroach_cluster'}
     - include_role: {name: 'db_privileges'}
     rescue:
     - fail:
         msg: "Failed to deploy cockroachdb to all nodes (servers)"
-
-# Locally build service
-- hosts: 'localhost'
-  connection: 'local'
-  gather_facts: no
-  tasks:
-  - block:
-    - include_role: {name: 'build_service'}
-    rescue:
-    - fail:
-        msg: "Failed to build {{ servicename }} service"
-
-# Upgrade hademo service
-- hosts: "{{target_env}}:&hademo"
-  remote_user: "root"
-  become: 'yes'
-  tasks:
-  - block:
-    - include_role: {name: 'deploy_service'}
-    - include_role: {name: 'upgrade_service'}
-      vars: {register_service: true}
-    rescue:
-    - fail:
-        msg: "Failed to upgrade {{ servicename }} service"
-
-# Upgrade consul ui
-- hosts: "{{target_env}}:&consul_ui"
-  remote_user: "root"
-  become: 'yes'
-  tasks:
-  - block:
-    - include_role: {name: 'upgrade_ui'}
-    rescue:
-    - fail:
-        msg: "Failed to upgrade consul ui"
+#
+## Locally build service
+#- hosts: 'localhost'
+#  connection: 'local'
+#  gather_facts: no
+#  tasks:
+#  - block:
+#    - include_role: {name: 'build_service'}
+#    rescue:
+#    - fail:
+#        msg: "Failed to build {{ servicename }} service"
+#
+## Upgrade hademo service
+#- hosts: "{{target_env}}:&hademo"
+#  remote_user: "root"
+#  become: 'yes'
+#  tasks:
+#  - block:
+#    - include_role: {name: 'deploy_service'}
+#    - include_role: {name: 'upgrade_service'}
+#      vars: {register_service: true}
+#    rescue:
+#    - fail:
+#        msg: "Failed to upgrade {{ servicename }} service"
+#
+## Upgrade consul ui
+#- hosts: "{{target_env}}:&consul_ui"
+#  remote_user: "root"
+#  become: 'yes'
+#  tasks:
+#  - block:
+#    - include_role: {name: 'upgrade_ui'}
+#    rescue:
+#    - fail:
+#        msg: "Failed to upgrade consul ui"
