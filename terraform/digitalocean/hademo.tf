@@ -49,9 +49,6 @@ resource "digitalocean_tag" "consul_server_role" {
 variable "cockroachdb_product_name" {
   default = "cockroachdb"
 }
-variable "cockroachdb_client_role" {
-  default = "cockroachdb-client"
-}
 variable "cockroachdb_server_role" {
   default = "cockroachdb-server"
 }
@@ -60,9 +57,6 @@ variable "cockroachdb_master_role" {
 }
 resource "digitalocean_tag" "cockroachdb_product_name" {
   name = "${var.cockroachdb_product_name}"
-}
-resource "digitalocean_tag" "cockroachdb_client_role" {
-  name = "${var.cockroachdb_client_role}"
 }
 resource "digitalocean_tag" "cockroachdb_server_role" {
   name = "${var.cockroachdb_server_role}"
