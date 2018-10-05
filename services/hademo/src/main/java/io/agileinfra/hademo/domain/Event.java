@@ -29,12 +29,12 @@ import java.time.Instant;
 @EqualsAndHashCode(of = {"sensorBusinessId", "timestamp"})
 @Builder
 @Entity
-@Table(name = "events_timeline", indexes = {@Index(name = "idx_events_timeline_sbid_timestamp", columnList = "sensor_bid,timestamp"),
+@Table(name = "events_timeline", indexes = {@Index(name = "idx_events_timeline_uniq", columnList = "sensor_bid,timestamp"),
         @Index(name = "idx_events_timeline_sensor_bid", columnList = "sensor_bid"),
         @Index(name = "idx_events_timeline_timestamp", columnList = "timestamp")})
 public class Event {
     @Id
-    @Column(name = "bed_fact_id")
+    @Column(name = "event_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
