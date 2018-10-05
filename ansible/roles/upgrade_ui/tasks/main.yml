@@ -30,8 +30,8 @@
 
 - htpasswd:
     path: "{{ htpasswd_path }}"
-    name: 'consuldemo'
-    password: "{{consuldemo_password}}"
+    name: 'hademo'
+    password: "{{hademo_password}}"
     owner: root
     group: www-data
     mode: 0640
