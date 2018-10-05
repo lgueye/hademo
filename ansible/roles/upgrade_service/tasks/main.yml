@@ -1,5 +1,6 @@
 ---
 
+# install os packages
 - name: 'install os packages'
   package: name="{{ item }}" state='present'
   with_items:
@@ -8,28 +9,29 @@
   - 'haveged'
   - 'openjdk-8-jre'
 
+# handle cockroach certificates for jvm
+- name: 'transform {{ remote_revision_path }}/certs/client.{{ cockroach_user}}.key into {{ remote_revision_path }}/certs/client.{{ cockroach_user}}.pk8'
+  shell: "cd {{ remote_revision_path }}/certs && openssl pkcs8 -topk8 -inform PEM -outform DER -in client.{{ cockroach_user}}.key -out client.{{ cockroach_user}}.pk8 -nocrypt"
+
+# upgrade service
 - name: "stop {{ servicename }}"
   service: name="{{ servicename }}" state='stopped'
   ignore_errors: 'yes'
 
-- name: "unlink {{ remote_root_path }}/{{ servicename }}.jar (old revision)"
-  file: state='absent' dest="{{ remote_root_path }}/{{ servicename }}.jar"
+- name: "unlink {{ remote_root_path }} (old revision)"
+  file: state='absent' dest="{{ remote_root_path }}"
   ignore_errors: 'yes'
 
-- name: "link {{ remote_revision_path }}/{{ servicename }}.jar to {{ remote_root_path }}/{{ servicename }}.jar (new revision)"
-  file: state='link' src="{{ remote_revision_path }}/{{ servicename }}.jar" dest="{{ remote_root_path }}/{{ servicename }}.jar"
-
-- name: 'unlink {{ remote_root_path }}/logback.xml (old revision)'
-  file: state='absent' dest='{{ remote_root_path }}/logback.xml'
-  ignore_errors: 'yes'
+- name: 'link {{ remote_revision_path }} to {{ remote_root_path }} (new revision)'
+  file: state='link' src="{{ remote_revision_path }}" dest='{{ remote_root_path }}'
 
 - name: 'interpolate {{ remote_revision_path }}/logback.xml config (new revision)'
   template: src="logback.xml.j2" dest="{{ remote_revision_path }}/logback.xml"
 
-- name: 'link {{ remote_revision_path }}/logback.xml to {{ remote_root_path }}/logback.xml (new revision)'
-  file: state='link' src="{{ remote_revision_path }}/logback.xml" dest='{{ remote_root_path }}/logback.xml'
+- name: 'interpolate {{ remote_revision_path }}/{{ servicename }}.properties config (new revision)'
+  template: src="{{ servicename }}.properties.j2" dest="{{ remote_revision_path }}/{{ servicename }}.properties"
 
-- name: 'extrapolate {{ servicename }}.service'
+- name: 'interpolate {{ servicename }}.service'
   template: src='{{ servicename }}.service.j2' dest="/etc/systemd/system/{{ servicename }}.service"
 
 - name: "reload systemd"
@@ -41,6 +43,7 @@
 - name: "wait for port {{ serviceport }} to be available"
   wait_for: port="{{ serviceport }}" delay='1' timeout="{{ service_startup_timeout }}"
 
+# register service in consul
 - name: 'deply consul service definition {{ servicename }}.json.j2 to {{ consul_config_dir }}/client/{{ servicename }}.json'
   template: src='{{ servicename }}.json.j2' dest="{{ consul_config_dir }}/client/{{ servicename }}.json"
   when: register_service == true
