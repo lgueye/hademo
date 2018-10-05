@@ -7,7 +7,7 @@
       {
          "id": "{{ cockroachdb_product }}",
          "name": "{{ cockroachdb_product }}",
-         "http": "http://{{ hostvars[ansible_host] }}:{{ consul_ports.http }}/health?ready=1",
+         "http": "http://{{ ansible_host }}:{{ cockroachdb_ports.http }}/health?ready=1",
          "interval": "10s"
       }
     ]
