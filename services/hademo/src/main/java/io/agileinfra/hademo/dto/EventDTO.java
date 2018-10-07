@@ -17,7 +17,7 @@ import java.time.Instant;
 @EqualsAndHashCode(of = {"sensorBusinessId", "timestamp"})
 @Builder
 public class EventDTO {
-    private Long id;
+    private String id;
     private Instant insertedAt;
     private Instant timestamp;
     private String sensorBusinessId;

@@ -1,21 +1,10 @@
 package io.agileinfra.hademo.domain;
 
 import io.agileinfra.hademo.dto.SensorState;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.Instant;
@@ -34,9 +23,10 @@ import java.time.Instant;
         @Index(name = "idx_events_timeline_timestamp", columnList = "timestamp")})
 public class Event {
     @Id
+    @GeneratedValue(generator = "cockroach_uuid")
+    @GenericGenerator(name = "cockroach_uuid", strategy = "io.agileinfra.hademo.domain.CockroachUUIDGenerationStrategy")
     @Column(name = "event_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Column(name = "inserted_at", columnDefinition = "BIGINT", nullable = false)
     @NotNull

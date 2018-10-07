@@ -19,7 +19,7 @@ public class EventServiceTest {
 
     @Test
     public void test() throws JsonProcessingException {
-        final long id = 1L;
+        final String id = "1";
         final String json = Jackson2ObjectMapperBuilder.json().serializationInclusion(JsonInclude.Include.NON_NULL) // Don’t include null
                 // values
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) // ISODate

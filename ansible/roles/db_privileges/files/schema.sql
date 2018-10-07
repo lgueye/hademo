@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS events_timeline CASCADE;
 
 CREATE TABLE events_timeline (
-  event_id    BIGSERIAL    NOT NULL,
+  event_id    VARCHAR(255) NOT NULL,
   state       VARCHAR(50)  NOT NULL,
   inserted_at BIGINT       NOT NULL,
   timestamp   BIGINT       NOT NULL,
@@ -15,5 +15,3 @@ CREATE INDEX idx_events_timeline_timestamp
   ON events_timeline (timestamp);
 ALTER TABLE events_timeline
   ADD CONSTRAINT idx_events_timeline_uniq UNIQUE (sensor_bid, timestamp);
-
-CREATE sequence events_timeline_event_id_seq START 1;
