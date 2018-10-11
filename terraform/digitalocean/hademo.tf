@@ -70,7 +70,7 @@ resource "digitalocean_tag" "cockroachdb_master_role" {
 
 # consumer service cluster vars
 variable "service_name" {
-  default = "hademo"
+  default = "sos"
 }
 resource "digitalocean_tag" "service_name" {
   name = "${var.service_name}"

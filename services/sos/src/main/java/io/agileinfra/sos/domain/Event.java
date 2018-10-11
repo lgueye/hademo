@@ -1,6 +1,6 @@
-package io.agileinfra.hademo.domain;
+package io.agileinfra.sos.domain;
 
-import io.agileinfra.hademo.dto.SensorState;
+import io.agileinfra.sos.dto.SensorState;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -24,7 +24,7 @@ import java.time.Instant;
 public class Event {
     @Id
     @GeneratedValue(generator = "cockroach_uuid")
-    @GenericGenerator(name = "cockroach_uuid", strategy = "io.agileinfra.hademo.domain.CockroachUUIDGenerationStrategy")
+    @GenericGenerator(name = "cockroach_uuid", strategy = "io.agileinfra.sos.domain.CockroachUUIDGenerationStrategy")
     @Column(name = "event_id")
     private String id;
 

@@ -1,9 +1,9 @@
-package io.agileinfra.hademo;
+package io.agileinfra.sos;
 
-import io.agileinfra.hademo.domain.Event;
-import io.agileinfra.hademo.domain.EventDTOToEventConverter;
-import io.agileinfra.hademo.domain.EventToEventDTOConverter;
-import io.agileinfra.hademo.dto.EventDTO;
+import io.agileinfra.sos.domain.Event;
+import io.agileinfra.sos.domain.EventDTOToEventConverter;
+import io.agileinfra.sos.domain.EventToEventDTOConverter;
+import io.agileinfra.sos.dto.EventDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

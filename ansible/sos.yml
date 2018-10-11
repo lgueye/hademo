@@ -1,4 +1,4 @@
-# Usage: export ANSIBLE_TF_DIR=../terraform/digitalocean && ansible-playbook --vault-id ~/.ansible_vault_pass.txt -i /etc/ansible/terraform.py hademo.yml -e "target_env=staging rev=`git log -1 --pretty='%h'` security_mode=secure"
+# Usage: export ANSIBLE_TF_DIR=../terraform/digitalocean && ansible-playbook --vault-id ~/.ansible_vault_pass.txt -i /etc/ansible/terraform.py sos.yml -e "target_env=staging rev=`git log -1 --pretty='%h'` security_mode=secure"
 
 # Locally register inventory hosts
 - hosts: 'localhost'
@@ -132,8 +132,8 @@
     - fail:
         msg: "Failed to build {{ servicename }} service"
 
-# Upgrade hademo service
-- hosts: "{{target_env}}:&hademo"
+# Upgrade sos service
+- hosts: "{{target_env}}:&sos"
   remote_user: "root"
   become: 'yes'
   tasks:

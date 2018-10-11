@@ -1,6 +1,6 @@
-package io.agileinfra.hademo;
+package io.agileinfra.sos;
 
-import io.agileinfra.hademo.dto.EventDTO;
+import io.agileinfra.sos.dto.EventDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

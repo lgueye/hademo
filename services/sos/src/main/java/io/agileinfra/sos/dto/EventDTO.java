@@ -1,4 +1,4 @@
-package io.agileinfra.hademo.dto;
+package io.agileinfra.sos.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

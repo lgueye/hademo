@@ -1,4 +1,4 @@
-package io.agileinfra.hademo.domain;
+package io.agileinfra.sos.domain;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

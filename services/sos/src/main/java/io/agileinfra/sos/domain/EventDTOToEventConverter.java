@@ -1,6 +1,6 @@
-package io.agileinfra.hademo.domain;
+package io.agileinfra.sos.domain;
 
-import io.agileinfra.hademo.dto.EventDTO;
+import io.agileinfra.sos.dto.EventDTO;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

@@ -1,11 +1,11 @@
-package io.agileinfra.hademo;
+package io.agileinfra.sos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
-import io.agileinfra.hademo.dto.EventDTO;
-import io.agileinfra.hademo.dto.SensorState;
+import io.agileinfra.sos.dto.EventDTO;
+import io.agileinfra.sos.dto.SensorState;
 import org.junit.Test;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 

@@ -1,4 +1,4 @@
-package io.agileinfra.hademo;
+package io.agileinfra.sos;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

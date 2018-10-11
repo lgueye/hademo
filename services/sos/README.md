@@ -1,5 +1,5 @@
 Build and run in test mode (h2):  
-- `mvn clean install && java -jar target/hademo-0.0.1-SNAPSHOT.jar --spring.jpa.generate-ddl=true`
+- `mvn clean install && java -jar target/sos-0.0.1-SNAPSHOT.jar --spring.jpa.generate-ddl=true`
 
 Test stack with (H2):  
 - `curl -i -XGET http://localhost:8080/actuator/health`

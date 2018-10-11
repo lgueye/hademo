@@ -1,6 +1,6 @@
-package io.agileinfra.hademo;
+package io.agileinfra.sos;
 
-import io.agileinfra.hademo.domain.Event;
+import io.agileinfra.sos.domain.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

@@ -36,8 +36,8 @@
 
 - htpasswd:
     path: "{{ htpasswd_path }}"
-    name: 'hademo'
-    password: "{{hademo_password}}"
+    name: 'sos'
+    password: "{{ service_password }}"
     owner: root
     group: www-data
     mode: 0640
