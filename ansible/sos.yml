@@ -147,13 +147,13 @@
     - fail:
         msg: "Failed to upgrade {{ servicename }} service"
 
-# Upgrade consul ui
-- hosts: "{{target_env}}:&consul-ui"
+# Upgrade load balancers
+- hosts: "{{target_env}}:&lb"
   remote_user: "root"
   become: 'yes'
   tasks:
   - block:
-    - include_role: {name: 'upgrade_ui'}
+    - include_role: {name: 'upgrade_lb'}
     rescue:
     - fail:
-        msg: "Failed to upgrade consul ui"
+        msg: "Failed to upgrade load balancers"
