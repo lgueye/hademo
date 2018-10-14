@@ -2,7 +2,13 @@ Build and run in test mode (h2):
 - `mvn clean install && java -jar target/sos-0.0.1-SNAPSHOT.jar --spring.jpa.generate-ddl=true`
 
 Test stack with (H2):  
-- `curl -i -XGET http://localhost:8080/actuator/health`
-- `curl -H 'Content-Type:application/json' -XPOST http://localhost:8080/api/events -d '{"timestamp":"2018-10-03T16:49:10.314Z","sensorBusinessId":"sbid-1","state":"on"}'`
-- `curl -i -H 'Content-Type:application/json' -XPOST http://localhost:8080/api/events -d '{"timestamp":"2018-10-03T16:49:10.314Z","sensorBusinessId":"sbid-1","state":"off"}'`
-- `curl -i -XGET http://localhost:8080/api/events`
+- http http://fallback.sos.agileinfra.io/actuator/health
+- http http://primary.sos.agileinfra.io/actuator/health
+- http http://fallback.sos.agileinfra.io/api/events
+- http http://primary.sos.agileinfra.io/api/events
+- http http://primary.consul.agileinfra.io
+- http -a 'sos:hademo' --follow http://primary.consul.agileinfra.io
+- http -a 'sos:hademo' --follow http://fallback.consul.agileinfra.io
+- http POST http://fallback.sos.agileinfra.io/api/events timestamp=`date -u +"%Y-%m-%dT%H:%M:%SZ"` sensorBusinessId='sbid-1' state='off'
+- http POST http://fallback.sos.agileinfra.io/api/events timestamp=`date -u +"%Y-%m-%dT%H:%M:%SZ"` sensorBusinessId='sbid-1' state='on'
+- http http://primary.sos.agileinfra.io/api/events
