@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class HademoApplication {
+public class SosApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HademoApplication.class, args);
+		SpringApplication.run(SosApplication.class, args);
 	}
 }
