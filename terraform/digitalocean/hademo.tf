@@ -84,11 +84,12 @@ resource "digitalocean_droplet" "consul_server_01_droplet" {
 }
 resource "ansible_host" "consul_server_01_droplet" {
     inventory_hostname = "${digitalocean_droplet.consul_server_01_droplet.name}"
-    groups = ["${var.target_env}","${var.consul_server_role}"]
+    groups = ["${var.target_env}","${var.consul_server_role}","${var.primary_datacenter_role}"]
     vars {
       ansible_host = "${digitalocean_droplet.consul_server_01_droplet.ipv4_address}"
       ansible_python_interpreter = "${var.ansible_python_interpreter}"
       datacenter_name = "${var.primary_datacenter_name}"
+      datacenter_role = "${var.primary_datacenter_role}"
     }
 }
 resource "digitalocean_droplet" "consul_server_02_droplet" {
@@ -102,11 +103,12 @@ resource "digitalocean_droplet" "consul_server_02_droplet" {
 }
 resource "ansible_host" "consul_server_02_droplet" {
     inventory_hostname = "${digitalocean_droplet.consul_server_02_droplet.name}"
-    groups = ["${var.target_env}","${var.consul_server_role}"]
+    groups = ["${var.target_env}","${var.consul_server_role}","${var.primary_datacenter_role}"]
     vars {
       ansible_host = "${digitalocean_droplet.consul_server_02_droplet.ipv4_address}"
       ansible_python_interpreter = "${var.ansible_python_interpreter}"
       datacenter_name = "${var.primary_datacenter_name}"
+      datacenter_role = "${var.primary_datacenter_role}"
     }
 }
 resource "digitalocean_droplet" "consul_server_03_droplet" {
@@ -120,10 +122,11 @@ resource "digitalocean_droplet" "consul_server_03_droplet" {
 }
 resource "ansible_host" "consul_server_03_droplet" {
     inventory_hostname = "${digitalocean_droplet.consul_server_03_droplet.name}"
-    groups = ["${var.target_env}","${var.consul_server_role}"]
+    groups = ["${var.target_env}","${var.consul_server_role}","${var.fallback_datacenter_role}"]
     vars {
       ansible_host = "${digitalocean_droplet.consul_server_03_droplet.ipv4_address}"
       ansible_python_interpreter = "${var.ansible_python_interpreter}"
+      datacenter_role = "${var.fallback_datacenter_role}"
       datacenter_name = "${var.fallback_datacenter_name}"
     }
 }
@@ -140,11 +143,12 @@ resource "digitalocean_droplet" "cockroachdb_server_01_droplet" {
 }
 resource "ansible_host" "cockroachdb_server_01_droplet" {
   inventory_hostname = "${digitalocean_droplet.cockroachdb_server_01_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.cockroachdb_server_role}","${var.cockroachdb_master_role}"]
+  groups = ["${var.target_env}","${var.consul_client_role}","${var.cockroachdb_server_role}","${var.cockroachdb_master_role}","${var.primary_datacenter_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.cockroachdb_server_01_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
     datacenter_name = "${var.primary_datacenter_name}"
+    datacenter_role = "${var.primary_datacenter_role}"
   }
 }
 resource "digitalocean_droplet" "cockroachdb_server_02_droplet" {
@@ -158,11 +162,12 @@ resource "digitalocean_droplet" "cockroachdb_server_02_droplet" {
 }
 resource "ansible_host" "cockroachdb_server_02_droplet" {
   inventory_hostname = "${digitalocean_droplet.cockroachdb_server_02_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.cockroachdb_server_role}"]
+  groups = ["${var.target_env}","${var.consul_client_role}","${var.cockroachdb_server_role}","${var.primary_datacenter_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.cockroachdb_server_02_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
     datacenter_name = "${var.primary_datacenter_name}"
+    datacenter_role = "${var.primary_datacenter_role}"
   }
 }
 resource "digitalocean_droplet" "cockroachdb_server_03_droplet" {
@@ -176,10 +181,11 @@ resource "digitalocean_droplet" "cockroachdb_server_03_droplet" {
 }
 resource "ansible_host" "cockroachdb_server_03_droplet" {
   inventory_hostname = "${digitalocean_droplet.cockroachdb_server_03_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.cockroachdb_server_role}"]
+  groups = ["${var.target_env}","${var.consul_client_role}","${var.cockroachdb_server_role}","${var.fallback_datacenter_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.cockroachdb_server_03_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
+    datacenter_role = "${var.fallback_datacenter_role}"
     datacenter_name = "${var.fallback_datacenter_name}"
   }
 }
@@ -196,11 +202,12 @@ resource "digitalocean_droplet" "service_01_droplet" {
 }
 resource "ansible_host" "service_01_droplet" {
   inventory_hostname = "${digitalocean_droplet.service_01_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.service_name}"]
+  groups = ["${var.target_env}","${var.consul_client_role}","${var.service_name}","${var.primary_datacenter_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.service_01_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
     datacenter_name = "${var.primary_datacenter_name}"
+    datacenter_role = "${var.primary_datacenter_role}"
   }
 }
 resource "digitalocean_droplet" "service_02_droplet" {
@@ -214,11 +221,12 @@ resource "digitalocean_droplet" "service_02_droplet" {
 }
 resource "ansible_host" "service_02_droplet" {
   inventory_hostname = "${digitalocean_droplet.service_02_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.service_name}"]
+  groups = ["${var.target_env}","${var.consul_client_role}","${var.service_name}","${var.primary_datacenter_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.service_02_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
     datacenter_name = "${var.primary_datacenter_name}"
+    datacenter_role = "${var.primary_datacenter_role}"
   }
 }
 resource "digitalocean_droplet" "service_03_droplet" {
@@ -232,10 +240,11 @@ resource "digitalocean_droplet" "service_03_droplet" {
 }
 resource "ansible_host" "service_03_droplet" {
   inventory_hostname = "${digitalocean_droplet.service_03_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.service_name}"]
+  groups = ["${var.target_env}","${var.consul_client_role}","${var.service_name}","${var.fallback_datacenter_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.service_03_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
+    datacenter_role = "${var.fallback_datacenter_role}"
     datacenter_name = "${var.fallback_datacenter_name}"
   }
 }
@@ -252,7 +261,7 @@ resource "digitalocean_droplet" "lb_01_droplet" {
 }
 resource "ansible_host" "lb_01_droplet" {
   inventory_hostname = "${digitalocean_droplet.lb_01_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.lb_name}"]
+  groups = ["${var.target_env}","${var.consul_client_role}","${var.lb_name}","${var.primary_datacenter_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.lb_01_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
@@ -271,7 +280,7 @@ resource "digitalocean_droplet" "lb_02_droplet" {
 }
 resource "ansible_host" "lb_02_droplet" {
   inventory_hostname = "${digitalocean_droplet.lb_02_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.lb_name}"]
+  groups = ["${var.target_env}","${var.consul_client_role}","${var.lb_name}","${var.fallback_datacenter_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.lb_02_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
