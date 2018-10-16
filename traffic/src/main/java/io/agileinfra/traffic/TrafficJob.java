@@ -25,8 +25,8 @@ public class TrafficJob implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws InterruptedException {
-        final int delayBetweenEvents = 20000;
-        final int delayBeforeFetch = 10000;
+        final int delayBetweenEvents = 5000;
+        final int delayBeforeFetch = 2000;
         final int retryDelay = 120000;
         while (true) {
             final String sensorBusinessId = Joiner.on("-").join("sbid", Strings.padStart(String.valueOf(ThreadLocalRandom.current().nextInt(1, 10001)), 5, '0'));
@@ -36,15 +36,23 @@ public class TrafficJob implements CommandLineRunner {
                 Thread.sleep(delayBetweenEvents);
                 primaryRepository.create(EventDTO.builder().sensorBusinessId(sensorBusinessId).state(SensorState.on).timestamp(Instant.now()).build());
                 Thread.sleep(delayBeforeFetch);
-                final List<EventDTO> events = primaryRepository.findAll();
-                log.info(">> Posted to primary datacenter, current events count = {}", events.size());
+                try {
+                    final List<EventDTO> events = primaryRepository.findAll();
+                    log.info(">> Current events count = {}", events.size());
+                } catch (Exception e) {
+                    log.error("/!\\ failed to fetch events");
+                }
             } else if (fallbackRepository.available()) {
                 fallbackRepository.create(EventDTO.builder().sensorBusinessId(sensorBusinessId).state(SensorState.off).timestamp(Instant.now()).build());
                 Thread.sleep(delayBetweenEvents);
                 fallbackRepository.create(EventDTO.builder().sensorBusinessId(sensorBusinessId).state(SensorState.on).timestamp(Instant.now()).build());
                 Thread.sleep(delayBeforeFetch);
-                final List<EventDTO> events = fallbackRepository.findAll();
-                log.info(">> Posted to fallback datacenter, current events count = {}", events.size());
+                try {
+                    final List<EventDTO> events = fallbackRepository.findAll();
+                    log.info(">> Current events count = {}", events.size());
+                } catch (Exception e) {
+                    log.error("/!\\ failed to fetch events");
+                }
             } else {
                 log.warn("Neither primary, nor fallback repository is available, retrying in PT2M");
                 Thread.sleep(retryDelay);

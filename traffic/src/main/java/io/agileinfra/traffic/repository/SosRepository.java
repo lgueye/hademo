@@ -34,18 +34,27 @@ public class SosRepository {
     }
 
     public void create(EventDTO event) {
-        System.out.println("event = " + event);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        final HttpEntity<EventDTO> entity = new HttpEntity<>(event, headers);
-        final URI uri = UriComponentsBuilder.fromHttpUrl(domain).path("api").path("events").build().encode().toUri();
-        restTemplate.exchange(uri, HttpMethod.POST, entity, Void.class);
+        try {
+            final HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            final HttpEntity<EventDTO> entity = new HttpEntity<>(event, headers);
+            final URI uri = UriComponentsBuilder.fromHttpUrl(domain).path("api").path("events").build().encode().toUri();
+            restTemplate.exchange(uri, HttpMethod.POST, entity, Void.class);
+            log.info(">> {} successfully processed event {}", domain, event);
+        } catch (Exception e) {
+          log.error("/!\\ {} failed to process event {}", domain, event);
+        }
     }
 
     public List<EventDTO> findAll() {
-        final URI uri = UriComponentsBuilder.fromHttpUrl(domain).path("api").path("events").build().encode().toUri();
-        final HttpEntity<Void> entity = new HttpEntity<>(new HttpHeaders());
-        return restTemplate.exchange(uri, HttpMethod.GET, entity, new ParameterizedTypeReference<List<EventDTO>>() {
-        }).getBody();
+        try {
+            final URI uri = UriComponentsBuilder.fromHttpUrl(domain).path("api").path("events").build().encode().toUri();
+            final HttpEntity<Void> entity = new HttpEntity<>(new HttpHeaders());
+            return restTemplate.exchange(uri, HttpMethod.GET, entity, new ParameterizedTypeReference<List<EventDTO>>() {
+            }).getBody();
+        } catch (Exception e) {
+            log.error("/!\\ {} failed to fetch events", domain);
+            throw new IllegalStateException("/!\\ "+domain+" failed to fetch events");
+        }
     }
 }

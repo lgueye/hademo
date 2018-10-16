@@ -95,7 +95,7 @@ resource "ansible_host" "consul_server_01_droplet" {
 resource "digitalocean_droplet" "consul_server_02_droplet" {
   image = "${var.droplet_image}"
   name = "${var.consul_server_role}-02"
-  region = "${var.primary_datacenter_name}"
+  region = "${var.fallback_datacenter_name}"
   size = "${var.droplet_size}"
   private_networking = true
   ssh_keys = ["${var.ssh_fingerprint}"]
@@ -103,12 +103,12 @@ resource "digitalocean_droplet" "consul_server_02_droplet" {
 }
 resource "ansible_host" "consul_server_02_droplet" {
     inventory_hostname = "${digitalocean_droplet.consul_server_02_droplet.name}"
-    groups = ["${var.target_env}","${var.consul_server_role}","${var.primary_datacenter_role}"]
+    groups = ["${var.target_env}","${var.consul_server_role}","${var.fallback_datacenter_role}"]
     vars {
       ansible_host = "${digitalocean_droplet.consul_server_02_droplet.ipv4_address}"
       ansible_python_interpreter = "${var.ansible_python_interpreter}"
-      datacenter_name = "${var.primary_datacenter_name}"
-      datacenter_role = "${var.primary_datacenter_role}"
+      datacenter_name = "${var.fallback_datacenter_name}"
+      datacenter_role = "${var.fallback_datacenter_role}"
     }
 }
 resource "digitalocean_droplet" "consul_server_03_droplet" {
@@ -154,7 +154,7 @@ resource "ansible_host" "cockroachdb_server_01_droplet" {
 resource "digitalocean_droplet" "cockroachdb_server_02_droplet" {
   image = "${var.droplet_image}"
   name = "${var.cockroachdb_server_role}-02"
-  region = "${var.primary_datacenter_name}"
+  region = "${var.fallback_datacenter_name}"
   size = "${var.droplet_size}"
   private_networking = true
   ssh_keys = ["${var.ssh_fingerprint}"]
@@ -162,12 +162,12 @@ resource "digitalocean_droplet" "cockroachdb_server_02_droplet" {
 }
 resource "ansible_host" "cockroachdb_server_02_droplet" {
   inventory_hostname = "${digitalocean_droplet.cockroachdb_server_02_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.cockroachdb_server_role}","${var.primary_datacenter_role}"]
+  groups = ["${var.target_env}","${var.consul_client_role}","${var.cockroachdb_server_role}","${var.fallback_datacenter_role}"]
   vars {
     ansible_host = "${digitalocean_droplet.cockroachdb_server_02_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
-    datacenter_name = "${var.primary_datacenter_name}"
-    datacenter_role = "${var.primary_datacenter_role}"
+    datacenter_name = "${var.fallback_datacenter_name}"
+    datacenter_role = "${var.fallback_datacenter_role}"
   }
 }
 resource "digitalocean_droplet" "cockroachdb_server_03_droplet" {
