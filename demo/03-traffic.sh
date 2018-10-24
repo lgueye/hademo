@@ -2,6 +2,6 @@
 
 cd ../traffic
 
-mvn clean install && java -jar target/traffic*.jar
+time mvn clean install && java -jar target/traffic*.jar
 
 cd -
