@@ -8,11 +8,17 @@ variable "primary_datacenter_name" {
 variable "fallback_datacenter_name" {
   default = "ams3"
 }
+variable "ternary_datacenter_name" {
+  default = "lon1"
+}
 variable "primary_datacenter_role" {
   default = "primary"
 }
 variable "fallback_datacenter_role" {
   default = "fallback"
+}
+variable "ternary_datacenter_role" {
+  default = "ternary"
 }
 variable "droplet_size" {
   default = "1gb"
@@ -114,7 +120,7 @@ resource "ansible_host" "consul_server_02_droplet" {
 resource "digitalocean_droplet" "consul_server_03_droplet" {
   image = "${var.droplet_image}"
   name = "${var.consul_server_role}-03"
-  region = "${var.fallback_datacenter_name}"
+  region = "${var.ternary_datacenter_name}"
   size = "${var.droplet_size}"
   private_networking = true
   ssh_keys = ["${var.ssh_fingerprint}"]
@@ -126,8 +132,8 @@ resource "ansible_host" "consul_server_03_droplet" {
     vars {
       ansible_host = "${digitalocean_droplet.consul_server_03_droplet.ipv4_address}"
       ansible_python_interpreter = "${var.ansible_python_interpreter}"
-      datacenter_role = "${var.fallback_datacenter_role}"
-      datacenter_name = "${var.fallback_datacenter_name}"
+      datacenter_role = "${var.ternary_datacenter_role}"
+      datacenter_name = "${var.ternary_datacenter_name}"
     }
 }
 
@@ -173,7 +179,7 @@ resource "ansible_host" "cockroachdb_server_02_droplet" {
 resource "digitalocean_droplet" "cockroachdb_server_03_droplet" {
   image = "${var.droplet_image}"
   name = "${var.cockroachdb_server_role}-03"
-  region = "${var.fallback_datacenter_name}"
+  region = "${var.ternary_datacenter_name}"
   size = "${var.droplet_size}"
   private_networking = true
   ssh_keys = ["${var.ssh_fingerprint}"]
@@ -185,8 +191,8 @@ resource "ansible_host" "cockroachdb_server_03_droplet" {
   vars {
     ansible_host = "${digitalocean_droplet.cockroachdb_server_03_droplet.ipv4_address}"
     ansible_python_interpreter = "${var.ansible_python_interpreter}"
-    datacenter_role = "${var.fallback_datacenter_role}"
-    datacenter_name = "${var.fallback_datacenter_name}"
+    datacenter_role = "${var.ternary_datacenter_role}"
+    datacenter_name = "${var.ternary_datacenter_name}"
   }
 }
 
@@ -229,25 +235,25 @@ resource "ansible_host" "service_02_droplet" {
     datacenter_role = "${var.primary_datacenter_role}"
   }
 }
-resource "digitalocean_droplet" "service_03_droplet" {
-  image = "${var.droplet_image}"
-  name = "${var.service_name}-03"
-  region = "${var.fallback_datacenter_name}"
-  size = "${var.droplet_size}"
-  private_networking = true
-  ssh_keys = ["${var.ssh_fingerprint}"]
-  tags = ["${digitalocean_tag.target_env.name}","${digitalocean_tag.consul_client_role.name}","${digitalocean_tag.service_name.name}"]
-}
-resource "ansible_host" "service_03_droplet" {
-  inventory_hostname = "${digitalocean_droplet.service_03_droplet.name}"
-  groups = ["${var.target_env}","${var.consul_client_role}","${var.service_name}","${var.fallback_datacenter_role}"]
-  vars {
-    ansible_host = "${digitalocean_droplet.service_03_droplet.ipv4_address}"
-    ansible_python_interpreter = "${var.ansible_python_interpreter}"
-    datacenter_role = "${var.fallback_datacenter_role}"
-    datacenter_name = "${var.fallback_datacenter_name}"
-  }
-}
+//resource "digitalocean_droplet" "service_03_droplet" {
+//  image = "${var.droplet_image}"
+//  name = "${var.service_name}-03"
+//  region = "${var.fallback_datacenter_name}"
+//  size = "${var.droplet_size}"
+//  private_networking = true
+//  ssh_keys = ["${var.ssh_fingerprint}"]
+//  tags = ["${digitalocean_tag.target_env.name}","${digitalocean_tag.consul_client_role.name}","${digitalocean_tag.service_name.name}"]
+//}
+//resource "ansible_host" "service_03_droplet" {
+//  inventory_hostname = "${digitalocean_droplet.service_03_droplet.name}"
+//  groups = ["${var.target_env}","${var.consul_client_role}","${var.service_name}","${var.fallback_datacenter_role}"]
+//  vars {
+//    ansible_host = "${digitalocean_droplet.service_03_droplet.ipv4_address}"
+//    ansible_python_interpreter = "${var.ansible_python_interpreter}"
+//    datacenter_role = "${var.fallback_datacenter_role}"
+//    datacenter_name = "${var.fallback_datacenter_name}"
+//  }
+//}
 
 # lb droplets and ansible inventory
 resource "digitalocean_droplet" "lb_01_droplet" {
