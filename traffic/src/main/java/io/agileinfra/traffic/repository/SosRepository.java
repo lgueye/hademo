@@ -53,7 +53,7 @@ public class SosRepository {
             return restTemplate.exchange(uri, HttpMethod.GET, entity, new ParameterizedTypeReference<List<EventDTO>>() {
             }).getBody();
         } catch (Exception e) {
-            log.error("/!\\ {} failed to fetch events", domain);
+            log.debug("/!\\ {} failed to fetch events", domain);
             throw new IllegalStateException("/!\\ "+domain+" failed to fetch events");
         }
     }

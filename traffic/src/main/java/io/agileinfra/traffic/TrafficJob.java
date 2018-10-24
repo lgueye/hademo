@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -32,29 +33,31 @@ public class TrafficJob implements CommandLineRunner {
             final String sensorBusinessId = Joiner.on("-").join("sbid", Strings.padStart(String.valueOf(ThreadLocalRandom.current().nextInt(1, 10001)), 5, '0'));
 
             if (primaryRepository.available()) {
+                log.info(">> Using [primary] datacenter");
                 primaryRepository.create(EventDTO.builder().sensorBusinessId(sensorBusinessId).state(SensorState.off).timestamp(Instant.now()).build());
                 Thread.sleep(delayBetweenEvents);
                 primaryRepository.create(EventDTO.builder().sensorBusinessId(sensorBusinessId).state(SensorState.on).timestamp(Instant.now()).build());
                 Thread.sleep(delayBeforeFetch);
                 try {
                     final List<EventDTO> events = primaryRepository.findAll();
-                    log.info(">> Current events count = {}", events.size());
+                    log.info("*** Current events count = {}", events.size());
                 } catch (Exception e) {
-                    log.error("/!\\ failed to fetch events");
+                    log.error("/!\\ Failed to fetch events from [primary] datacenter, cause: {}", e.getMessage());
                 }
             } else if (fallbackRepository.available()) {
+                log.info(">> Using [fallback] datacenter");
                 fallbackRepository.create(EventDTO.builder().sensorBusinessId(sensorBusinessId).state(SensorState.off).timestamp(Instant.now()).build());
                 Thread.sleep(delayBetweenEvents);
                 fallbackRepository.create(EventDTO.builder().sensorBusinessId(sensorBusinessId).state(SensorState.on).timestamp(Instant.now()).build());
                 Thread.sleep(delayBeforeFetch);
                 try {
                     final List<EventDTO> events = fallbackRepository.findAll();
-                    log.info(">> Current events count = {}", events.size());
+                    log.info("*** Current events count = {}", events.size());
                 } catch (Exception e) {
-                    log.error("/!\\ failed to fetch events");
+                    log.error("/!\\ Failed to fetch events from [fallback] datacenter, cause: {}", e.getMessage());
                 }
             } else {
-                log.warn("Neither primary, nor fallback repository is available, retrying in PT2M");
+                log.warn("/!\\ Neither [primary], nor [fallback] datacenter is available, retrying in {}", Duration.ofMillis(retryDelay));
                 Thread.sleep(retryDelay);
             }
         }
