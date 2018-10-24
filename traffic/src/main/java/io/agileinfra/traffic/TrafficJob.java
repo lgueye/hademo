@@ -25,9 +25,9 @@ public class TrafficJob implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws InterruptedException {
-        final int delayBetweenEvents = 20000;
-        final int delayBeforeFetch = 10000;
-        final int retryDelay = 120000;
+        final int delayBetweenEvents = 2000;
+        final int delayBeforeFetch = 1000;
+        final int retryDelay = 3000;
         while (true) {
             final String sensorBusinessId = Joiner.on("-").join("sbid", Strings.padStart(String.valueOf(ThreadLocalRandom.current().nextInt(1, 10001)), 5, '0'));
 
